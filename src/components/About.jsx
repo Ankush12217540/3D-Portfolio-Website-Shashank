@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import { Tilt } from 'react-tilt';
 import { motion } from 'framer-motion';
 
@@ -45,8 +45,8 @@ const About = () => {
             variants={fadeIn("", "", 0.1, 1)}
             className='mt-4 text-secondary text-[17px] max-w-3xl leading-[30px]'
           >
-            I am an Information Technology Undergraduate at Pune Institute Of Computer Technology with keen interest in software development, experience in C++, C#, and JavaScript,
-            and expertise in frameworks like React, Node.js, and Three.js. I'm also a Game Developer creating interactive experiences in both games and web apps. Let's work together to bring ideas to life!
+            Hi, I'm Shashank Kumar, a CSE undergrad at Lovely Professional University with a strong passion for cloud computing, especially Amazon Web Services (AWS). I have a solid foundation in Data Structures & Algorithms, Linux, and backend development with Java.
+I'm currently focused on leveraging AWS services like EC2, S3, Lambda, and security best practices to build and deploy scalable Java-based cloud applications. Beyond tech, I'm also a team player and leader, with valuable experience from participating in zonal-level sports, which has shaped my communication and collaboration skills in tech environments.
           </motion.p>
         </div>
 
@@ -92,7 +92,7 @@ const About = () => {
         ))}
       </div>
     </>
-  )
-}
+  );
+};
 
 export default SectionWrapper(About, "about");

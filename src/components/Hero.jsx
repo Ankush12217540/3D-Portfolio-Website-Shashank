@@ -18,17 +18,17 @@ const Hero = () => {
         <div>
           {/* Name */}
           <h1 className={`${styles.heroHeadText} text-white`}>
-            Hello, I'm <span className="text-[#915eff]">Saurav</span>
+            Hello, I'm <span className="text-[#915eff]">Shashank</span>
           </h1>
           {/* Details */}
           <p className={`${styles.heroSubText} mt-2 text-white-100`}>
-            I develop
+            I am Skilled in : 
           </p>
           <p className={`${styles.sectionHeadText}`}>
             {/* Typewriter effect */}
-            <span style={{ color: '#915eff', fontWeight: 'bold' }}>
+            <span style={{ color: '#B72727', fontWeight: 'bold' }}>
               <Typewriter
-                words={['Games', 'Web Apps', '3D Models', 'Videos']}
+                words={['AWS', 'Web Development', 'Databse(MYSQL)', ]}
                 loop={true}
                 cursor
                 cursorStyle="|"
@@ -45,7 +45,7 @@ const Hero = () => {
         <PCCanvas />
 
       {/* Avatar Section */}
-      <motion.div
+      {/* <motion.div
         className="absolute inset-y-0 right-0 flex items-center justify-end p-10"
         initial={{ x: 200, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
@@ -56,7 +56,7 @@ const Hero = () => {
           alt="Avatar"
           className="w-96 h-96 sm:w-72 sm:h-72 rounded-full object-cover"
         />
-      </motion.div>
+      </motion.div> */}
 
 
       <div className="absolute bottom-10 xs:bottom-20 sm:bottom-10 w-full flex justify-center items-center">

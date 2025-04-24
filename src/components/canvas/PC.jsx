@@ -1,30 +1,50 @@
-import { Suspense, useEffect, useMemo, useState } from "react";
-import { Canvas } from "@react-three/fiber";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Preload, useGLTF } from "@react-three/drei";
-
-import CanvasLoader from '../Loader';
+import CanvasLoader from "../Loader";
 
 const Anime = ({ isMobile }) => {
-  const gaming_setup = useMemo(() => useGLTF('./gaming_setup/scene.gltf'), []);
+  const groupRef = useRef();
+  const model = useMemo(() => useGLTF("./gaming_setup/scene.gltf"), []);
+
+  useFrame((state) => {
+    const t = state.clock.getElapsedTime();
+    if (groupRef.current) {
+      // Define a bounded range for horizontal movement
+      const moveRange = 2.5; // Max horizontal movement to the right/left
+      const movementSpeed = 1.2; // Speed of movement
+
+      // Set the horizontal movement between -moveRange and +moveRange
+      groupRef.current.position.x = Math.sin(t * movementSpeed) * moveRange;
+
+      // Vertical bobbing effect, adjusting the range so the model moves up and down a bit
+      const verticalRange = 0.3; // Max vertical movement (upward and downward)
+      groupRef.current.position.y = Math.sin(t * 0.6) * verticalRange + 1.5; // Added upward shift
+    }
+  });
 
   return (
-    <mesh>
-      {/* Reduced light intensity for optimization */}
-      <hemisphereLight intensity={0.6} groundColor="black" />
-      <pointLight intensity={0.7} />
+    <group ref={groupRef}>
+      {/* Lighting Setup */}
+      <ambientLight intensity={0.6} />
+      <directionalLight position={[5, 10, 5]} intensity={1.2} />
       <spotLight
-        position={[-20, 10, 10]}
-        angle={0.12}
+        position={[15, 30, 10]}
+        angle={0.3}
         penumbra={1}
-        intensity={0.8}  // Lowered the intensity to reduce calculations
+        intensity={1}
+        castShadow
       />
+      <pointLight position={[-10, -10, -10]} intensity={0.4} />
+
+      {/* Gaming Setup Model */}
       <primitive
-        object={gaming_setup.scene}
-        scale={isMobile ? 0.3 : 0.5}
-        position={isMobile ? [1, -3, -0.2] : [2, -2, 0]}
-        rotation={[0, -0.2, -0.15]}
+        object={model.scene}
+        scale={isMobile ? 0.35 : 0.45} // Adjusted scale for mobile and desktop
+        position={[1.5, -2.8, -2]} // Shifted upward to make sure it's visible
+        rotation={[0, -0.4, -0.1]}
       />
-    </mesh>
+    </group>
   );
 };
 
@@ -32,48 +52,43 @@ const PCCanvas = () => {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia('(max-width: 700px)');
+    const mediaQuery = window.matchMedia("(max-width: 768px)");
     setIsMobile(mediaQuery.matches);
 
-    const handleMediaQueryChange = (event) => {
-      setIsMobile(event.matches);
-    };
+    const handleChange = (e) => setIsMobile(e.matches);
+    mediaQuery.addEventListener("change", handleChange);
 
-    mediaQuery.addEventListener('change', handleMediaQueryChange);
-
-    return () => {
-      mediaQuery.removeEventListener('change', handleMediaQueryChange);
-    };
+    return () => mediaQuery.removeEventListener("change", handleChange);
   }, []);
 
   return (
     <div
-    style={{
-      width: isMobile ? '600px' : '900px', // Different width for mobile and desktop
-      height: isMobile ? '600px' : '900px', // Different height for mobile and desktop
-      margin: 'auto',
-      maxWidth: '100%', // Ensures canvas doesn't overflow on smaller screens
-    }}
-  >
-    <Canvas
-      frameloop="demand"
-      dpr={isMobile ? [1, 1.5] : [1, 2]} // Adjust DPR for mobile devices
-      camera={{ position: [20, 2, 5], fov: 20 }}
-      gl={{ antialias: false, preserveDrawingBuffer: true }}
-      performance={{ min: 0.5, max: 1 }}
+      style={{
+        width: "100vw",
+        height: "100vh",
+        overflow: "hidden",
+        background: "radial-gradient(circle at center, #141414, #000)",
+        cursor: "grab",
+      }}
     >
-      <Suspense fallback={<CanvasLoader />}>
-        <OrbitControls
-          enableZoom={false}
-          maxPolarAngle={Math.PI / 2}
-          minPolarAngle={Math.PI / 2}
-        />
-        <Anime isMobile={isMobile} />
-      </Suspense>
-
-      <Preload all />
-    </Canvas>
-  </div>
+      <Canvas
+        frameloop="always"
+        dpr={[1, isMobile ? 1.5 : 2]}
+        camera={{ position: [8, 3, 7], fov: 30 }} // Wider FOV to capture more of the model
+        gl={{ antialias: true, preserveDrawingBuffer: true }}
+      >
+        <Suspense fallback={<CanvasLoader />}>
+          <OrbitControls
+            enableZoom={false}
+            autoRotate={false}
+            maxPolarAngle={Math.PI / 2}
+            minPolarAngle={Math.PI / 2}
+          />
+          <Anime isMobile={isMobile} />
+        </Suspense>
+        <Preload all />
+      </Canvas>
+    </div>
   );
 };
 
